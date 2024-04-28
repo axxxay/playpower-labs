@@ -1,0 +1,316 @@
+swagger: '2.0'
+info:
+  title: User API
+  version: '1.0'
+paths:
+  /api/auth/login:
+    post:
+      summary: Logs in a user
+      parameters:
+        - in: body
+          name: body
+          description: User object that needs to be authenticated
+          required: true
+          schema:
+            $ref: '#/definitions/Login'
+      responses:
+        200:
+          description: Successful login
+          schema:
+            type: object
+            properties:
+              jwtToken:
+                type: string
+                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+  /api/assignments/create:
+    post:
+      summary: Creates an assignment
+      description: Creates an assignment for a teacher. Only authenticated teacher can make an API call.
+      parameters:
+        - in: body
+          name: body
+          description: Assignment object that needs to be created
+          required: true
+          schema:
+            $ref: '#/definitions/Assignments'
+        - in: header
+          name: Authorization
+          type: string
+          example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+          description: Bearer JWT token for authentication
+          required: true
+      responses:
+        200:
+          description: Assignment created successfully
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                id: string
+        401:
+          description: Unauthorized request
+  /api/assignments/get:
+    get:
+      summary: Get assignments
+      description: Returns the list of assignments. Only authenticated users can make an API call.
+      parameters:
+        - in: header
+          name: Authorization
+          type: string
+          example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+          description: Bearer JWT token for authentication
+          required: true
+      responses:
+        200:
+          description: Successful data fetch
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Assignments'
+        401:
+          description: Invalid JWT token
+  /api/assignments/get/{id}:
+    get:
+      summary: Get assignment by ID
+      description: Returns the assignment by ID. Only authenticated users can make an API call.
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+          description: Assignment ID
+        - in: header
+          name: Authorization
+          type: string
+          example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+          description: Bearer JWT token for authentication
+          required: true
+      responses:
+        200:
+          description: Successful data fetch
+          schema:
+            $ref: '#/definitions/Assignments'
+        401:
+          description: Unauthorized
+  /api/assignments/update/{id}:
+    put:
+      summary: Update assignment by ID
+      description: Updates the assignment by ID. Only authenticated teacher can make an API call.
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+          description: Assignment ID
+        - in: header
+          name: Authorization
+          type: string
+          example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+          description: Bearer JWT token for authentication
+          required: true
+        - in: body
+          name: body
+          description: User object that needs to be authenticated
+          required: true
+          schema:
+            $ref: '#/definitions/Assignments'
+      responses:
+        200:
+          description: Successful data fetch
+          schema:
+            $ref: '#/definitions/Assignments'
+        401:
+          description: Unauthorized
+  /api/assignments/delete/{id}:
+    delete:
+      summary: Delete assignment by ID
+      description: Deletes the assignment by ID. Only authenticated teacher can make an API call.
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+          description: Assignment ID
+        - in: header
+          name: Authorization
+          type: string
+          example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+          description: Bearer JWT token for authentication
+          required: true
+      responses:
+        200:
+          description: Successful data fetch
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                id: string
+        401:
+          description: Unauthorized
+  /api/assignments/submit/{id}:
+    post:
+      summary: Submit assignment by ID
+      description: Submits the assignment by ID. Only authenticated student can make an API call.
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+          description: Assignment ID
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              studentName:
+                type: string
+              docUrl:
+                type: string
+      responses:
+        200:
+          description: Successful data fetch
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+  /api/assignments/submissions/{id}:
+    get:
+      summary: Get submissions by ID
+      description: Returns the submissions by ID. Only authenticated teacher can make an API call.
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+          description: Assignment ID
+        - in: header
+          name: Authorization
+          type: string
+          example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+          description: Bearer JWT token for authentication
+          required: true
+      responses:
+        200:
+          description: Successful data fetch
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Submissions'
+        401:
+          description: Unauthorized
+  /api/assignments/submission/{id}/{assignmentId}:
+    get:
+      summary: Get submission by ID and assignment ID
+      description: Returns the submission by ID and assignment ID. Only authenticated teacher can make an API call.
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+          description: Submission ID
+        - in: path
+          name: assignmentId
+          type: string
+          required: true
+          description: Assignment ID
+        - in: header
+          name: Authorization
+          type: string
+          example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+          description: Bearer JWT token for authentication
+          required: true
+      responses:
+        200:
+          description: Successful data fetch
+          schema:
+            $ref: '#/definitions/Submissions'
+        401:
+          description: Unauthorized
+  /api/assignments/score/{id}:
+    put:
+      summary: Score assignment by ID
+      description: Scores the assignment by ID. Only authenticated teacher can make an API call.
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+          description: Submission ID
+        - in: header
+          name: Authorization
+          type: string
+          example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+          description: Bearer JWT token for authentication
+          required: true
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              score:
+                type: integer
+              assignmentId:
+                type: string
+      responses:
+        200:
+          description: Successful data fetch
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+        401:
+          description: Unauthorized
+  /api/docs:
+    get:
+      summary: Get API documentation
+      description: Returns the Swagger UI related to API docs.
+      responses:
+        200:
+          description: A successful response returns the Swagger UI related to API docs.
+          content:
+            text/html:
+              schema:
+                type: string
+                description: HTML content of the Swagger UI.
+definitions:
+  Login:
+    type: object
+    required:
+      - username
+      - password
+    properties:
+      username:
+        type: string
+      password:
+        type: string
+  Assignments:
+    type: object
+    required:
+      - title
+      - description
+    properties:
+      title:
+        type: string
+      description:
+        type: string
+      dueDate:
+        type: string
+        format: date-time
+      totalScore:
+        type: integer
+  Submissions:
+    type: object
+    required:
+      - studentName
+      - docUrl
+    properties:
+      studentName:
+        type: string
+      docUrl:
+        type: string
